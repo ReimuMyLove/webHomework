@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <style type="text/css">
+        * {
+            padding: 0;
+            margin: 0;
+            list-style: none;
+            border: 0;
+        }
+        .tiaozi{
+            width: 1447px;
+            height: 20px;
+            margin-top: 70px;
+            margin-left: 233px;
+            margin-bottom: 0;
+            background: #ccc;
+            display: inline-block;
+        }
+        .laba{
+            width: 40px;
+            height: 20px;
+            background: #ccc;
+            float: left;
+        }
+        .gundong{
+            width: 1000px;
+            height: 20px;
+            background: #ccc;
+            float: left;
+            color: red;
+        }
+
+        .all {
+            width: 1440px;
+            height: 810px;
+            padding: 7px;
+            border: 1px solid #ccc;
+            margin: 5px auto;
+            position: relative;
+        }
+
+        .screen {
+            width: 1440px;
+            height: 810px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .screen li {
+            width: 1440px;
+            height: 810px;
+            margin: 0 auto;
+            overflow: hidden;
+            float: left;
+        }
+
+        .screen ul {
+            position: absolute;
+            left:0;
+            top: 0px;
+            width: 10080px;
+        }
+
+        .all ol {
+            position: absolute;
+            left:300px ;
+            bottom: 40px;
+            line-height: 20px;
+            text-align: center;
+            list-style: none;
+        }
+
+        .all ol li {
+            float: left;
+            width: 50px;
+            height: 50px;
+            background: #fff;
+            border: 1px solid #ccc;
+            margin-left: 100px;
+            border-radius: 50%;
+            text-align: center;
+            background-color: rgba(0,0,0,0.7);
+        }
+
+        .all ol li.current {
+            background: #DB192A;
+        }
+
+        #arr {
+            display: none;
+        }
+
+        #arr span {
+            width: 40px;
+            height: 40px;
+            position: absolute;
+            left: 5px;
+            top: 50%;
+            margin-top: -20px;
+            background: #000;
+            cursor: pointer;
+            line-height: 40px;
+            text-align: center;
+            font-weight: bold;
+            font-family: '黑体';
+            font-size: 30px;
+            color: #fff;           opacity: 0.3;
+            border: 1px solid #fff;
+        }
+
+        #arr #right {
+            right: 5px;
+            left: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="tiaozi  ">
+        <div class="laba"><img src="images/a15.png">：</div>
+        <div class="gundong">巴拉巴拉巴拉巴拉巴拉巴拉巴拉</div>
+    </div>
+
+    <div class="all" id='box'>
+        <div class="screen"><!--相框-->
+            <ul>
+                <li><img src="images/b1.png" width="1440" height="810"/></li>
+                <li><img src="images/b2.png" width="1440" height="810"/></li>
+                <li><img src="images/b3.png" width="1440" height="810"/></li>
+                <li><img src="images/b4.png" width="1440" height="810"/></li>
+                <li><img src="images/b5.png" width="1440" height="810"/></li>
+            </ul>
+            
+            <ol>
+            </ol>
+        </div>
+        <div id="arr"><span id="left">&lt;</span><span id="right">&gt;</span></div>
+</div>
+</body>
+<script>
+    var box = document.getElementById("box");
+    var screen = box.children[0];
+    var ulObj = screen.children[0];
+    var liList = ulObj.children;
+    var olObj = screen.children[1];
+    var arr = document.getElementById("arr");
+    var width = screen.offsetWidth; 
+    var index = 0; 
+    var timeId;
+    for (var i = 0; i < liList.length; i++) {
+        var liObj = document.createElement("li");
+        olObj.appendChild(liObj);
+        liObj.setAttribute("index", i);
+        liObj.onmouseover = function () {
+
+            for (var i = 0; i < olObj.children.length; i++) { 
+                olObj.children[i].className = "";
+            }
+            this.className = "current";
+        }
+        liObj.onclick = function () {
+
+            for (var i = 0; i < olObj.children.length; i++) {
+                olObj.children[i].className = "";
+            }
+            this.className = "current";
+            index = this.getAttribute("index");
+            console.log(index);
+            animate(ulObj, -width * index);
+        };
+    }
+    olObj.children[0].className = "current";
+    document.getElementById("box").onmouseover = function () {
+        clearInterval(timeId);
+        document.getElementById("arr").style.display = "block";
+    };
+    document.getElementById("box").onmouseout = function () {
+        timeId = setInterval(right, 3000);
+        document.getElementById("arr").style.display = "";
+    }
+    var liNode = ulObj.children[0].cloneNode(true);
+    ulObj.appendChild(liNode);
+    var right = document.getElementById("right");
+
+    right.onclick = function() {
+        index++; 
+        if (index === olObj.children.length) {  
+            index = 0;
+            animate(ulObj, width * index);
+            olObj.children[olObj.children.length - 1].className = "";
+            olObj.children[0].className = "current";
+            ulObj.style.left = 0 + "px";
+        } else {
+            animate(ulObj, -width * index);
+            for (var i = 0; i < olObj.children.length; i++) { 
+                olObj.children[i].className = "";
+            }
+            olObj.children[index].className = "current";
+        }
+    }
+    var left = document.getElementById("left");
+    left.onclick = function () {
+        if (index === 0) {
+            index = olObj.children.length;
+            ulObj.style.left = -width * index + "px";
+        }
+        index--;
+        animate(ulObj, -width * index);
+        for (var i = 0; i < olObj.children.length; i++) { 
+                olObj.children[i].className = "";
+            }
+        olObj.children[index].className = "current";
+    }
+    timeId = setInterval(right, 3000);
+    function animate(element, target) {
+        clearInterval(element.timeId);
+        element.timeId = window.setInterval(function () {
+            var current = element.offsetLeft;
+            var step = 10;
+            step = current < target ? step : -step; 
+            current += step;
+            if ((Math.abs(target - current)) > Math.abs(step)) {
+                element.style.left = current + "px";
+            } else {
+                window.clearInterval(element.timeId);
+                element.style.left = target + "px";
+            }
+        }, 5);
+    }
+</script>
+</html>
